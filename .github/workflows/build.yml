@@ -1,0 +1,31 @@
+name: Build Wingman-os
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install NASM
+        run: sudo apt-get update && sudo apt-get install -y nasm qemu-system-x86
+
+      - name: Build boot sector
+        run: make
+
+      - name: Run in QEMU (headless, 2s timeout)
+        run: |
+          timeout 2s qemu-system-x86_64 -nographic -drive format=raw,file=boot.bin || true
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: boot-bin
+          path: boot.bin
