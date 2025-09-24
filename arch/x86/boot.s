@@ -8,7 +8,7 @@ _start:
     mov %ax, %es            # extra-segment = 0
     mov %ax, %ss            # stack-segment = 0
 
-    mov $stack_top, %esp    # sätt stackpekaren
+    mov $stack_top, %esp    # sätt stackpekaren till slutet av stack 
     call start_kernel       # hoppa till C
 
 hang:
