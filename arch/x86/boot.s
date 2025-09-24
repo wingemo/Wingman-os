@@ -3,7 +3,7 @@
 
 _start:
     cli                     # stäng av avbrott
-    xor %ax, %ax
+    xor %ax, %ax            # AX = 0x0000
     mov %ax, %ds            # data-segment = 0
     mov %ax, %es            # extra-segment = 0
     mov %ax, %ss            # stack-segment = 0
