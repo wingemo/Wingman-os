@@ -16,5 +16,5 @@ hang:
     jmp hang
 
 .section .bss
-.lcomm stack, 4096          # reservera 4 KB stack
-stack_top:
+.lcomm stack, 4096          # reservera 4 KB med variabeln stack
+stack_top:                  # variabel för slutet på data sektionen
