@@ -1,4 +1,4 @@
-name: Build Wingman-os
+name: Build and Test Wingman-os
 
 on:
   push:
@@ -14,18 +14,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install NASM
+      - name: Install tools
         run: sudo apt-get update && sudo apt-get install -y nasm qemu-system-x86
 
       - name: Build boot sector
         run: make
 
-      - name: Run in QEMU (headless, 2s timeout)
+      - name: Run QEMU and capture output
         run: |
-          timeout 2s qemu-system-x86_64 -nographic -drive format=raw,file=boot.bin || true
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: boot-bin
-          path: boot.bin
+          # Kör i 2 sekunder och logga utdata
+          timeout 2s qemu-system-x86_64 -nographic -drive format=raw,file=boot.bin > qemu.log 2>&1 || true
+          echo "===== QEMU OUTPUT ====="
+          cat qemu.log
+          echo "======================="
+          
+          # Test: kontrollera om din boot-text syns
+          if ! grep -q "Hello from Wingman-OS" qemu.log; then
+            echo "❌ Expected output not found in QEMU log"
+            exit 1
+          fi
+          echo "✅ Boot message found!"
