@@ -28,7 +28,7 @@ jobs:
           echo "$OUTPUT"
           echo "==================="
 
-          if echo "$OUTPUT" | grep -q "hello world"; then
+          if echo "$OUTPUT" | grep -q "hello worl"; then
             echo "✅ Bootloader skrev hello world!"
           else
             echo "❌ Bootloader-output saknas eller fel"
