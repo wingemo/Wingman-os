@@ -1,41 +1,26 @@
 ; boot.asm
-; En 16-bitars bootloader som BIOS laddar på 0x7C00.
-; Den skriver "hello world" via BIOS teletype (int 0x10)
-; och stänger sedan av maskinen via APM.
+; Minimal bootloader (512 bytes) som skriver "hello world" och stannar.
 
 BITS 16
-ORG 0x7C00
+ORG 0x7C00          ; BIOS laddar hit
 
 start:
-    ; skriv strängen
-    mov si, msg
-    mov ah, 0x0E
+    mov si, msg     ; SI = pekare till strängen
+    mov ah, 0x0E    ; BIOS teletype (print char)
 
 .print:
-    lodsb
-    cmp al, 0
+    lodsb           ; AL = [SI], SI++
+    cmp al, 0       ; slut på sträng?
     je .done
-    int 0x10
+    int 0x10        ; skriv tecknet
     jmp .print
 
 .done:
-    ; försök stänga av via APM
-    mov ax, 0x5301     ; APM Installation Check
-    xor bx, bx
-    int 0x15
+    cli             ; disable interrupts
+    hlt             ; stoppa CPU
 
-    mov ax, 0x5307     ; APM Set Power State
-    mov bx, 1          ; all devices
-    mov cx, 3          ; power off
-    int 0x15
+msg db "hello world", 0
 
-    ; om avstängning misslyckas -> häng CPU
-    cli
-    hlt
-
-msg db "hello world", 0x0D, 0x0A, 0
-
-
-; fyll ut till 510 bytes
+; Fyll ut sektorn till 510 bytes
 times 510-($-$$) db 0
-dw 0xAA55             ; boot signature
+dw 0xAA55           ; Boot signature (måste finnas)
