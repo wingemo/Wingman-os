@@ -18,5 +18,16 @@ jobs:
 
       - name: Run in QEMU
         run: |
-          qemu-system-x86_64 -drive format=raw,file=boot.bin \
-            -nographic -serial mon:stdio -d guest_errors -no-reboot -no-shutdown
+          set -e
+          # Kör QEMU och fånga utdata
+          OUTPUT=$(qemu-system-x86_64 -drive format=raw,file=boot.bin \
+            -nographic -serial mon:stdio -d guest_errors -no-reboot)
+          echo "$OUTPUT"
+
+          # Verifiera att texten skrivs ut
+          if echo "$OUTPUT" | grep -q "hello world"; then
+            echo "✅ Bootloader skrev hello world!"
+          else
+            echo "❌ Bootloader-output saknas"
+            exit 1
+          fi
