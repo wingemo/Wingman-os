@@ -33,7 +33,8 @@ start:
     cli
     hlt
 
-msg db "hello world", 0
+msg db "hello world", 0x0D, 0x0A, 0
+
 
 ; fyll ut till 510 bytes
 times 510-($-$$) db 0
