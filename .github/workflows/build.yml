@@ -1,4 +1,4 @@
-name: Hello World Bootloader
+name: WingmanOS
 
 on:
   push:
@@ -16,15 +16,21 @@ jobs:
       - name: Build bootloader
         run: nasm -f bin boot.asm -o boot.bin
 
+      - name: Dump boot.bin (hex view)
+        run: hexdump -C boot.bin
+
       - name: Run in QEMU
         run: |
           set -e
-          # Kör QEMU och fånga utdata
           OUTPUT=$(qemu-system-x86_64 -drive format=raw,file=boot.bin \
             -nographic -serial mon:stdio -d guest_errors -no-reboot)
+          echo "=== QEMU OUTPUT ==="
           echo "$OUTPUT"
+          echo "==================="
 
-          # Verifiera att texten skrivs ut
           if echo "$OUTPUT" | grep -q "hello world"; then
             echo "✅ Bootloader skrev hello world!"
           else
+            echo "❌ Bootloader-output saknas eller fel"
+            exit 1
+          fi
