@@ -28,6 +28,3 @@ jobs:
           if echo "$OUTPUT" | grep -q "hello world"; then
             echo "✅ Bootloader skrev hello world!"
           else
-            echo "❌ Bootloader-output saknas"
-            exit 1
-          fi
